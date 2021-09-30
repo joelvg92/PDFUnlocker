@@ -1,33 +1,39 @@
 package com.pdf.pdfassembler.controller;
 
+import com.pdf.pdfassembler.model.UnlockedPDF;
 import com.pdf.pdfassembler.utils.UnlockPDF;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.Arrays;
+import java.util.Base64;
+import java.util.Map;
 
 @RestController
 public class PDFController {
 
-    @PostMapping("/processpdf")
-    public ResponseEntity<UploadFileResponse> processPDF(@RequestParam("files") MultipartFile[] files) {
+
+    @PostMapping("/base64/unlockpdf")
+    public ResponseEntity<UnlockedPDF> unlockPDFBase64(@RequestBody Map<String, Object> payload) {
+        String pdfContent = (String) payload.get("pdf");
+        byte[] decoder = Base64.getDecoder().decode(pdfContent);
+        InputStream targetStream = new ByteArrayInputStream(decoder);
         UnlockPDF unlockPDF = new UnlockPDF();
         try {
-            for (MultipartFile file : Arrays.asList(files)) {
-                unlockPDF.unlock(null, file);
-            }
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/json")).body((unlockPDF.unlock(null, targetStream)));
         }catch (Exception e){
             System.err.println(e.getLocalizedMessage());
         }
-        return ResponseEntity.ok().body(new UploadFileResponse(files[0].getName(),files[0].getContentType()));
+        return null;
     }
 
-    @PostMapping("/unlockpdf")
+
+    @PostMapping("/mpf/unlockpdf")
     public ResponseEntity<InputStreamResource> unlockPDF(@RequestParam("file") MultipartFile file) {
         UnlockPDF unlockPDF = new UnlockPDF();
         try {
