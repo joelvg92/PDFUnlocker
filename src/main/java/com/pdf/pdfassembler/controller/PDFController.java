@@ -20,7 +20,7 @@ public class PDFController {
 
 
     @PostMapping("/base64/unlockpdf")
-    @CrossOrigin(value = "*")
+    //@CrossOrigin(value = "*")
     public ResponseEntity<UnlockedPDF> unlockPDFBase64(@RequestBody Map<String, Object> payload) {
         String pdfContent = (String) payload.get("pdf");
         byte[] decoder = Base64.getDecoder().decode(pdfContent);
@@ -38,7 +38,7 @@ public class PDFController {
 
 
     @PostMapping("/mpf/unlockpdf")
-    @CrossOrigin(value = "*")
+    //@CrossOrigin(value = "*")
     public ResponseEntity<InputStreamResource> unlockPDF(@RequestParam("file") MultipartFile file) {
         UnlockPDF unlockPDF = new UnlockPDF();
         HttpHeaders responseHeaders = new HttpHeaders();
@@ -53,9 +53,12 @@ public class PDFController {
 
 
     @GetMapping(value="/hello", produces = MediaType.TEXT_PLAIN_VALUE)
-    @CrossOrigin(value = "*")
-    public String sayHello() {
+    //@CrossOrigin(value = "*")
+    public ResponseEntity<String> sayHello() {
+        HttpHeaders responseHeaders = new HttpHeaders();
+        responseHeaders.set("Access-Control-Allow-Origin", "*");
 
-        return "Hello there!";
+        return ResponseEntity.ok().headers(responseHeaders).body("Hello World");
+
     }
 }
