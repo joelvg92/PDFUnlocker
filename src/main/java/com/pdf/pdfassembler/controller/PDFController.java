@@ -20,7 +20,7 @@ public class PDFController {
 
 
     @PostMapping("/base64/unlockpdf")
-    //@CrossOrigin(value = "*")
+    @CrossOrigin(value = "*")
     public ResponseEntity<UnlockedPDF> unlockPDFBase64(@RequestBody Map<String, Object> payload) {
         String pdfContent = (String) payload.get("pdf");
         byte[] decoder = Base64.getDecoder().decode(pdfContent);
@@ -29,7 +29,8 @@ public class PDFController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Allow-Origin", "*");
         try {
-            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/json")).headers(responseHeaders).body((unlockPDF.unlock(null, targetStream)));
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/json")).body((unlockPDF.unlock(null, targetStream)));
+            //return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/json")).headers(responseHeaders).body((unlockPDF.unlock(null, targetStream)));
         }catch (Exception e){
             System.err.println(e.getLocalizedMessage());
         }
@@ -38,13 +39,14 @@ public class PDFController {
 
 
     @PostMapping("/mpf/unlockpdf")
-    //@CrossOrigin(value = "*")
+    @CrossOrigin(value = "*")
     public ResponseEntity<InputStreamResource> unlockPDF(@RequestParam("file") MultipartFile file) {
         UnlockPDF unlockPDF = new UnlockPDF();
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Allow-Origin", "*");
         try {
-            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/pdf")).headers(responseHeaders).body(new InputStreamResource(unlockPDF.unlock(null, file)));
+            return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/pdf")).body(new InputStreamResource(unlockPDF.unlock(null, file)));
+            //return ResponseEntity.ok().contentType(MediaType.parseMediaType("application/pdf")).headers(responseHeaders).body(new InputStreamResource(unlockPDF.unlock(null, file)));
         }catch (Exception e){
             System.err.println(e.getLocalizedMessage());
         }
@@ -53,12 +55,12 @@ public class PDFController {
 
 
     @GetMapping(value="/hello", produces = MediaType.TEXT_PLAIN_VALUE)
-    //@CrossOrigin(value = "*")
+    @CrossOrigin(value = "*")
     public ResponseEntity<String> sayHello() {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Access-Control-Allow-Origin", "*");
-
-        return ResponseEntity.ok().headers(responseHeaders).body("Hello World");
+        return ResponseEntity.ok().body("Hello World");
+        //return ResponseEntity.ok().headers(responseHeaders).body("Hello World");
 
     }
 }
